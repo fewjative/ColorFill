@@ -1,0 +1,9 @@
+Package: com.joshdoctors.colorfill
+Name: ColorFill
+Depends: mobilesubstrate
+Version: 0.0.1
+Architecture: iphoneos-arm
+Description: Colors the Reachability view space based on the dominant colors of the current screen.
+Maintainer: Josh Doctors
+Author: Josh Doctors
+Section: Tweaks
