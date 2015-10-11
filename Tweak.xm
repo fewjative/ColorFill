@@ -10,17 +10,42 @@ static BOOL enabled = NO;
 static UIImage * currentScreen;
 static BOOL isLowering = NO;
 
-%hook UIWindow
+// for iOS9
+%hook SBMainWorkspace
 
--(void)setFrame:(CGRect)frame{
+-(void)handleReachabilityModeActivated {
+	currentScreen = _UICreateScreenUIImage();
 	%orig;
-	
-	if(isLowering)
-	{
-		NSLog(@"Deconstructing the ColorFill view and removing it from reachability.");
-		[[ColorFillController sharedInstance] deconstructWidget];
-		isLowering = NO;
+	if (enabled && [%c(SBReachabilityManager) reachabilitySupported]) {
+		NSLog(@"[ColorFill] Setting reachability window.");
+		SBWindow *backgroundView = MSHookIvar<SBWindow*>(self,"_reachabilityEffectWindow");
+		[[ColorFillController sharedInstance] setWindowAndImage:backgroundView image:currentScreen];
+		[[ColorFillController sharedInstance] setupWidget];
+		[currentScreen release];
+		currentScreen = nil;
+		NSLog(@"[ColorFill] Creation and addition success.");
 	}
+}
+
+-(void)handleReachabilityModeDeactivated {
+	%orig;
+
+	int64_t delay = 1.0;
+	dispatch_time_t time = dispatch_time(DISPATCH_TIME_NOW, delay * NSEC_PER_SEC);
+	dispatch_after(time, dispatch_get_main_queue(), ^(void) {
+			[[ColorFillController sharedInstance] deconstructWidget];
+	});
+
+}
+
+-(void)handleCancelReachabilityRecognizer:(id)arg{
+	%orig;
+
+	int64_t delay = 1.0;
+	dispatch_time_t time = dispatch_time(DISPATCH_TIME_NOW, delay * NSEC_PER_SEC);
+	dispatch_after(time, dispatch_get_main_queue(), ^(void) {
+			[[ColorFillController sharedInstance] deconstructWidget];
+	});
 }
 
 %end
@@ -31,19 +56,34 @@ static BOOL isLowering = NO;
 	currentScreen = _UICreateScreenUIImage();
 	%orig;
 	if (enabled && [%c(SBReachabilityManager) reachabilitySupported]) {
-		NSLog(@"Setting reachability window.");
+		NSLog(@"[ColorFill] Setting reachability window.");
 		SBWindow *backgroundView = MSHookIvar<SBWindow*>(self,"_reachabilityEffectWindow");
 		[[ColorFillController sharedInstance] setWindowAndImage:backgroundView image:currentScreen];
 		[[ColorFillController sharedInstance] setupWidget];
 		[currentScreen release];
 		currentScreen = nil;
-		NSLog(@"Creation and addition success.");
+		NSLog(@"[ColorFill] Creation and addition success.");
 	}
 }
 
 -(void)handleReachabilityModeDeactivated {
 	%orig;
-	isLowering = YES;
+
+	int64_t delay = 1.0;
+	dispatch_time_t time = dispatch_time(DISPATCH_TIME_NOW, delay * NSEC_PER_SEC);
+	dispatch_after(time, dispatch_get_main_queue(), ^(void) {
+			[[ColorFillController sharedInstance] deconstructWidget];
+	});
+}
+
+-(void)handleCancelReachabilityRecognizer:(id)arg{
+	%orig;
+
+	int64_t delay = 1.0;
+	dispatch_time_t time = dispatch_time(DISPATCH_TIME_NOW, delay * NSEC_PER_SEC);
+	dispatch_after(time, dispatch_get_main_queue(), ^(void) {
+			[[ColorFillController sharedInstance] deconstructWidget];
+	});
 }
 
 %end

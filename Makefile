@@ -5,6 +5,7 @@ TWEAK_NAME = ColorFill
 ColorFill_FILES = Tweak.xm ColorFillController.m
 ColorFill_FRAMEWORKS = UIKit Foundation CoreGraphics QuartzCore
 ColorFill_CFLAGS = -Wno-error
+ColorFill_LDFLAGS += -Wl,-segalign,4000
 export GO_EASY_ON_ME := 1
 include $(THEOS_MAKE_PATH)/tweak.mk
 

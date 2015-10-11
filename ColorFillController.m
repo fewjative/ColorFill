@@ -63,11 +63,10 @@ struct pixel {
 -(void)setupWidget {
 
 	if (backgroundWindow) {
-		NSLog(@"Valid backgroundWindow");
 
 		if(screenShot)
 		{
-			NSLog(@"Valid screenShot");
+			NSLog(@"[ColorFill]Valid screenshot.");
 			colorFillView = [[UIImageView alloc] initWithFrame:backgroundWindow.bounds];
 			UIColor *dominantColor = [screenShot dominantColor];
 			[colorFillView setBackgroundColor:dominantColor];
@@ -81,10 +80,9 @@ struct pixel {
 
 	if (colorFillView) {
 		[colorFillView removeFromSuperview];
+		[colorFillView release];
+		colorFillView = nil;
 	}
-
-	[colorFillView release];
-	colorFillView = nil;
 }
 
 @end
